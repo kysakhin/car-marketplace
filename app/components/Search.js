@@ -7,50 +7,59 @@ import {
     SelectValue
 } from "@/components/ui/select";
 import { Separator } from '@/components/ui/separator';
+import { Search } from 'lucide-react';
+import { Car_Makers, Pricing } from "@/app/shared/Car_Makers"
 
-const Search = () => {
+const SearchBox = () => {
     return (
         <div className='flex gap-10 md:p-5 bg-white rounded-md md:rounded-full flex-col md:flex md:flex-row px-5 py-5 items-center w-fit md:w-max '>
 
             <Select>
                 <SelectTrigger className="w-[180px] outline-none md:border-none shadow-none text-lg">
-                    <SelectValue placeholder="Theme" />
+                    <SelectValue placeholder="Cars" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="old">Old</SelectItem>
                 </SelectContent>
             </Select>
 
-            <Separator  orientation='vertical'/>
+            <Separator  orientation='vertical' className="hidden md:block" />
 
             <Select>
                 <SelectTrigger className="w-[180px] outline-none md:border-none shadow-none text-lg">
-                    <SelectValue placeholder="Theme" />
+                    <SelectValue placeholder="Car Maker" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
+                    {Car_Makers.map((maker) => (
+                        <SelectItem key={maker.id} value={maker.name}>
+                            {maker.name}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
 
-            <Separator orientation='vertical' />
+            <Separator orientation='vertical' className="hidden md:block" />
 
             <Select>
                 <SelectTrigger className="w-[180px] outline-none md:border-none shadow-none text-lg">
-                    <SelectValue placeholder="Theme" />
+                    <SelectValue placeholder="Pricing" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
+                    {Pricing.map((price) => (
+                        <SelectItem key={price.id} value={price.price}>
+                            {price.price}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
+
+            <div className='mr-3 flex justify-center items-center align-middle'>
+                <Search className='cursor-pointer hover:fill-black ' />
+            </div>
 
         </div>
     )
 }
 
-export default Search
+export default SearchBox
