@@ -16,7 +16,10 @@ export default function MostSearched() {
               key={index}
               className="pl-4 md:pl-6 basis-1/2 md:basis-1/3"
             >
-              <div className="shadow-sm hover:shadow-lg transition-all rounded-md flex flex-col w-full">
+              <div className="shadow-sm hover:shadow-lg transition-all rounded-md flex flex-col w-full hover:scale-105">
+                {car.old !== 1? 
+                  (<span className="fixed px-2 py-1 ml-3 mt-3 bg-green-400 text-white rounded-full">New</span>)
+                : null }
                 <img src={car.image} className="w-full" alt={car.name} />
                 <div className="p-5 pb-0">
                   <h1 className="text-start p-4 text-2xl font-semibold">{car.name}</h1>

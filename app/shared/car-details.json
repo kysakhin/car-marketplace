@@ -1,0 +1,86 @@
+{
+  "carDetails": [
+    {
+      "label": "Listing Title",
+      "name": "listingTitle",
+      "fieldType": "text",
+      "required": true
+    },
+    {
+      "label": "Tagline",
+      "name": "tagline",
+      "fieldType": "text",
+      "required": false
+    },
+    {
+      "label": "Original Price",
+      "name": "originalPrice",
+      "fieldType": "number",
+      "required": true
+    },
+    {
+      "label": "Selling Price",
+      "name": "sellingPrice",
+      "fieldType": "number",
+      "required": true
+    },
+    {
+      "label": "Category",
+      "name": "category",
+      "fieldType": "dropdown",
+      "options": ["SUV", "Sedan", "Electric", "Pickup Truck", "Minivan", "Taxi"],
+      "required": true
+    },
+    {
+      "label": "Condition",
+      "name": "condition",
+      "fieldType": "dropdown",
+      "options": ["New", "Used", "Certified Pre-Owned"],
+      "required": true
+    },
+    {
+      "label": "Maker",
+      "name": "maker",
+      "fieldType": "dropdown",
+      "options": ["Toyota", "Honda", "Ford", "Chevrolet", "Tesla", "BMW", "Mercedes-Benz", "Audi", "Nissan", "Hyundai"],
+      "required": true
+    },
+    {
+      "label": "Year",
+      "name": "year",
+      "fieldType": "number",
+      "required": true
+    },
+    {
+      "label": "Transmission",
+      "name": "transmission",
+      "fieldType": "dropdown",
+      "options": ["Automatic", "5-Speed Manual", "6-Speed Manual"],
+      "required": true
+    },
+    {
+      "label": "Engine Size",
+      "name": "engineSize",
+      "fieldType": "text",
+      "required": true
+    },
+    {
+      "label": "Cylinders",
+      "name": "cylinders",
+      "fieldType": "number",
+      "required": true
+    },
+    {
+      "label": "Color",
+      "name": "color",
+      "fieldType": "text",
+      "required": true
+    },
+    {
+      "label": "Description",
+      "name": "description",
+      "fieldType": "textarea",
+      "required": true
+    }
+  ]
+}

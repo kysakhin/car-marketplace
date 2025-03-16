@@ -9,7 +9,8 @@ function createRandomCarList() {
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT10cftxEDYqZ_iLLpBES4SqCJGPeCl2d3-uA&s',
     miles: '4500',
     transmission: 'Automatic',
-    price: faker.finance.amount({min: 4000, max: 15000})
+    price: faker.finance.amount({min: 4000, max: 15000}),
+    old: faker.number.int({ min: 0, max: 1 })
   };
 }
 

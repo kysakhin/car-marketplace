@@ -42,7 +42,7 @@ export default function Navbar() {
       <div className="flex items-center gap-4">
         {isSignedIn ? (
           <>
-            <Button>Submit a listing</Button>
+            <Link href="/profile"><Button>Submit a listing</Button></Link>
             <UserButton />
           </>
         ) : (

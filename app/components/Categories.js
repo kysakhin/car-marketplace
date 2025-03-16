@@ -11,7 +11,7 @@ export const carCategories = [
 
 export default function Categories() {
   return (
-    <div className="mt-40">
+    <div className="mt-40 flex flex-col justify-center items-center">
       <h2 className="md:text-5xl text-3xl m-10 font-bold">Browse by type</h2>
       <div className="flex gap-6 p-10 flex-wrap ">
         {carCategories.map((category) => {
