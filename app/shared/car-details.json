@@ -82,5 +82,75 @@
       "fieldType": "textarea",
       "required": true
     }
+  ],
+  "carFeatures": [
+    {
+      "label": "Sunroof",
+      "name": "sunroof"
+    },
+    {
+      "label": "Leather Seats",
+      "name": "leatherSeats"
+    },
+    {
+      "label": "Backup Camera",
+      "name": "backupCamera"
+    },
+    {
+      "label": "Blind Spot Monitoring",
+      "name": "blindSpotMonitoring"
+    },
+    {
+      "label": "Bluetooth",
+      "name": "bluetooth"
+    },
+    {
+      "label": "Cruise Control",
+      "name": "cruiseControl"
+    },
+    {
+      "label": "Heated Seats",
+      "name": "heatedSeats"
+    },
+    {
+      "label": "Keyless Entry",
+      "name": "keylessEntry"
+    },
+    {
+      "label": "Navigation System",
+      "name": "navigationSystem"
+    },
+    {
+      "label": "Apple CarPlay / Android Auto",
+      "name": "appleCarplayAndroidAuto"
+    },
+    {
+      "label": "All-Wheel Drive (AWD)",
+      "name": "allWheelDrive"
+    },
+    {
+      "label": "Remote Start",
+      "name": "remoteStart"
+    },
+    {
+      "label": "Third Row Seating",
+      "name": "thirdRowSeating"
+    },
+    {
+      "label": "Power Windows",
+      "name": "powerWindows"
+    },
+    {
+      "label": "Automatic Emergency Braking",
+      "name": "automaticEmergencyBraking"
+    },
+    {
+      "label": "Lane Departure Warning",
+      "name": "laneDepartureWarning"
+    },
+    {
+      "label": "Adaptive Cruise Control",
+      "name": "adaptiveCruiseControl"
+    }
   ]
 }

@@ -1,18 +1,39 @@
+import { db } from "@/app/config/firebase-config";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { NextResponse } from "next/server";
+
+
 export async function POST(req) {
   try {
-    const data = await req.json();
+    const body = await req.json();
 
-    // TODO: Save data to database (MongoDB, Firebase, etc.)
-    console.log("Received listing:", data);
+    // TODO: Save data to database
 
-    return new Response(JSON.stringify({ message: "Listing added!" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
+    const { listingTitle, tagline, originalPrice, sellingPrice, category, condition, maker, year, transmission, engineSize, cylinders, description, selectedFeatures } = body;
+
+    await addDoc(collection(db, "car-listings"), {
+      listingTitle,
+      tagline,
+      originalPrice,
+      sellingPrice,
+      category,
+      condition,
+      maker,
+      year,
+      transmission,
+      engineSize,
+      cylinders,
+      description,
+      selectedFeatures,
+      createdAt: serverTimestamp()
     });
+
+    return NextResponse.json({
+      message: "Added successfully."
+    }, { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ message: "Error processing request" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json({
+      message: "Internal server error"
+    }, { status: 500 });
   }
 }
