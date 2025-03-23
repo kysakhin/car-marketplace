@@ -9,10 +9,32 @@ import { Button } from "@/components/ui/button";
 import { Command, CommandInput, CommandItem, CommandList, CommandEmpty } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Check, ChevronDown, PlusCircle } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 
 export default function AddListing() {
   const [formData, setFormData] = useState({});
   const [selectedFeatures, setSelectedFeatures] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const { userId } = useAuth();
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length) {
+      const newImages = files.map(file => ({
+        file,
+        previewUrl: URL.createObjectURL(file),
+        id: Math.random().toString(36).substring(2)
+      }));
+      
+      const updatedImages = [...selectedImages, ...newImages];
+      setSelectedImages(updatedImages);
+      
+      if (activePreview === null && updatedImages.length > 0) {
+        setActivePreview(updatedImages[0].id);
+      }
+    }
+  };
+
 
   const handleChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -27,16 +49,27 @@ export default function AddListing() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const finalData = {
-      ...formData,
-      selectedFeatures,
-    };
+    const finalData = new FormData();
+
+    Object.entries(formData).forEach(([key, value]) => {
+      finalData.append(key, value);
+    })
+
+    finalData.append("userId", userId);
+    finalData.append("selectedFeatures", selectedFeatures);
+
+    selectedImages.forEach((image, index) => {
+      finalData.append("images", image.file);
+    });
+
+    selectedImages.forEach((image, index) => {
+      formData.append('images', image.file);
+    })
 
     try {
       const res = await fetch("/api/add-listing", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalData),
+        body: finalData,
       });
 
       if (!res.ok) throw new Error("Failed to submit");
@@ -91,6 +124,8 @@ export default function AddListing() {
             </div>
 
             <CarFeaturesSelection selectedFeatures={selectedFeatures} onFeatureChange={handleFeatureChange} />
+
+            <ImageUpload handleImageChange={handleImageChange} selectedImages={selectedImages} setSelectedImages={setSelectedImages} />
 
             {/* Submit Button */}
             <div className="flex justify-center mt-12">
@@ -174,3 +209,199 @@ function CarFeaturesSelection({ selectedFeatures, onFeatureChange }) {
     </div>
   );
 }
+
+const ImageUpload = ({ handleImageChange, selectedImages, setSelectedImages }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [activePreview, setActivePreview] = useState(null);
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = Array.from(e.dataTransfer.files);
+      const newImages = files.map(file => ({
+        file,
+        previewUrl: URL.createObjectURL(file),
+        id: Math.random().toString(36).substring(2)
+      }));
+      
+      const updatedImages = [...selectedImages, ...newImages];
+      setSelectedImages(updatedImages);
+      
+      // Set the first image as active preview if none is selected
+      if (activePreview === null && updatedImages.length > 0) {
+        setActivePreview(updatedImages[0].id);
+      }
+    }
+  };
+
+  const removeImage = (id) => {
+    setSelectedImages(prev => {
+      const filteredImages = prev.filter(image => image.id !== id);
+      
+      // If we're removing the active preview, select a new one
+      if (activePreview === id) {
+        if (filteredImages.length > 0) {
+          setActivePreview(filteredImages[0].id);
+        } else {
+          setActivePreview(null);
+        }
+      }
+      
+      return filteredImages;
+    });
+  };
+
+  const getActiveImage = () => {
+    return selectedImages.find(img => img.id === activePreview);
+  };
+
+  return (
+    <div className="w-full max-w-4xl mx-auto p-6">
+      {/* Main Layout */}
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Upload Section */}
+        <div className="md:w-1/2">
+          <div 
+            className={`relative border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center h-48 transition-colors ${
+              isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <div className="text-center">
+              <svg 
+                className="mx-auto h-10 w-10 text-gray-400" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth="2" 
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <p className="mt-2 text-sm text-gray-600">
+                Drag and drop multiple images here or
+              </p>
+              <label className="mt-2 cursor-pointer inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-colors">
+                Browse files
+                <input 
+                  type="file" 
+                  className="hidden"
+                  accept="image/*" 
+                  onChange={handleImageChange}
+                  multiple
+                />
+              </label>
+            </div>
+            <div className="mt-3 text-sm text-gray-500">
+              {selectedImages.length > 0 && (
+                <span>{selectedImages.length} image{selectedImages.length !== 1 ? 's' : ''} selected</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Main Preview Section */}
+        <div className="md:w-1/2">
+          <div className="border border-gray-200 rounded-lg bg-gray-50 flex items-center justify-center h-48 overflow-hidden">
+            {activePreview ? (
+              <div className="relative w-full h-full">
+                <img 
+                  src={getActiveImage()?.previewUrl} 
+                  alt="Preview" 
+                  className="w-full h-full object-contain" 
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2">
+                  {getActiveImage()?.file.name} ({Math.round(getActiveImage()?.file.size / 1024)} KB)
+                </div>
+              </div>
+            ) : (
+              <div className="text-center text-gray-400">
+                <svg 
+                  className="mx-auto h-12 w-12" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth="2" 
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                <p className="mt-2">No images selected</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Thumbnail Preview Strip */}
+      {selectedImages.length > 0 && (
+        <div className="mt-6">
+          <div className="flex items-center mb-2">
+            <h3 className="text-sm font-medium text-gray-700">All Images</h3>
+            <span className="ml-2 px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">{selectedImages.length}</span>
+          </div>
+          <div className="flex space-x-2 overflow-x-auto pb-2">
+            {selectedImages.map((image) => (
+              <div 
+                key={image.id} 
+                className={`relative flex-shrink-0 w-24 h-24 border-2 rounded-md overflow-hidden cursor-pointer ${
+                  activePreview === image.id ? 'border-blue-500' : 'border-gray-200'
+                }`}
+                onClick={() => setActivePreview(image.id)}
+              >
+                <img 
+                  src={image.previewUrl} 
+                  alt="Thumbnail" 
+                  className="w-full h-full object-cover" 
+                />
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeImage(image.id);
+                  }}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity"
+                >
+                  <svg 
+                    className="h-3 w-3" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24" 
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth="2" 
+                      d="M6 18L18 6M6 6l12 12" 
+                    />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
